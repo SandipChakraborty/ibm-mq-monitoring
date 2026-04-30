@@ -1,0 +1,91 @@
+{
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Messages Processed",
+      "gridPos": { "x": 0, "y": 0, "w": 6, "h": 4 },
+      "targets": [
+        { "expr": "mq_messages_success_total", "refId": "A" }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Messages Failed",
+      "gridPos": { "x": 6, "y": 0, "w": 6, "h": 4 },
+      "targets": [
+        { "expr": "mq_messages_failed_total", "refId": "A" }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Avg Processing Time (ms)",
+      "gridPos": { "x": 12, "y": 0, "w": 6, "h": 4 },
+      "targets": [
+        {
+          "expr": "(rate(mq_processing_time_seconds_sum[1m]) / rate(mq_processing_time_seconds_count[1m])) * 1000",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "P95 Latency (ms)",
+      "gridPos": { "x": 18, "y": 0, "w": 6, "h": 4 },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, rate(mq_processing_time_seconds_bucket[1m])) * 1000",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Processing Rate",
+      "gridPos": { "x": 0, "y": 4, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "expr": "rate(mq_messages_success_total[1m])",
+          "legendFormat": "Success/sec",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(mq_messages_failed_total[1m])",
+          "legendFormat": "Failure/sec",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Failure %",
+      "gridPos": { "x": 12, "y": 4, "w": 12, "h": 8 },
+      "targets": [
+        {
+          "expr": "(rate(mq_messages_failed_total[1m]) / (rate(mq_messages_success_total[1m]) + rate(mq_messages_failed_total[1m]))) * 100",
+          "legendFormat": "Failure %",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Latency Trend (ms)",
+      "gridPos": { "x": 0, "y": 12, "w": 24, "h": 8 },
+      "targets": [
+        {
+          "expr": "(rate(mq_processing_time_seconds_sum[1m]) / rate(mq_processing_time_seconds_count[1m])) * 1000",
+          "legendFormat": "Avg Latency",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.95, rate(mq_processing_time_seconds_bucket[1m])) * 1000",
+          "legendFormat": "P95 Latency",
+          "refId": "B"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 38,
+  "title": "MQ Monitoring with Latency",
+  "version": 2
+}
